@@ -1,0 +1,2 @@
+# pairs
+Pairs trading playground
