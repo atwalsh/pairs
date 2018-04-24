@@ -1,2 +1,4 @@
 # pairs
-Pairs trading playground
+Pairs trading
+
+WIP
