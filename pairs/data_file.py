@@ -1,0 +1,2 @@
+class DataFile:
+    pass
