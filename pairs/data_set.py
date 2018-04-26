@@ -14,7 +14,7 @@ nyse_dir = os.path.join(dirname, '../data/nyse/')
 nasdaq_dir = os.path.join(dirname, '../data/nasdaq/')
 
 
-class DataSet(object):
+class DataSet:
     # Create a calendar of US business days
     us_bd = CustomBusinessDay(calendar=USFederalHolidayCalendar())
 
