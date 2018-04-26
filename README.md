@@ -1,4 +1,2 @@
 # pairs
-Pairs trading
-
 WIP
