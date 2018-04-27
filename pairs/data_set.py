@@ -66,26 +66,42 @@ class DataSet:
         self.data: pd.DataFrame = self.load_dataframe()
 
     def load_dataframe(self) -> pd.DataFrame:
-        df = pd.DataFrame()
-        df.index.name = 'ticker'
+        """
+        Creates a main DataFrame from all data sets then transposes the index and columns.
 
-        # TODO: fix df has NaN values after reading in 2nd data set
-        # Read data files into DataFrame
-        self.df_read_data_sets('{}{}/'.format(nasdaq_dir, self.year), df)
-        # self.df_read_data_sets('{}{}/'.format(nyse_dir, self.year), df)
+        :return: Transposed DataFrame of all CSV data files.
+        """
+        # Read data files into DataFrames
+        nasdaq_df = self.df_read_data_sets('{}{}/'.format(nasdaq_dir, self.year))
+        nyse_df = self.df_read_data_sets('{}{}/'.format(nyse_dir, self.year))
 
-        df_t = df.T
+        # Concat DataFrames into main result DataFrames
+        main_df = pd.concat([nasdaq_df, nyse_df], axis=0)
 
-        return df_t
+        # Return transposed DataFrame with dates as index and ticker symbols as columns
+        return main_df.T
 
     @staticmethod
-    def df_read_data_sets(dir_path: str, main_df: pd.DataFrame):
+    def df_read_data_sets(dir_path: str) -> pd.DataFrame:
+        """
+        Read a directory of CSV data files into a DataFrame.
+
+        :param dir_path: Full path of directory.
+        :return: DataFrame of all CSV data files in directory.
+        """
+        tmp_df = pd.DataFrame()
+        tmp_df.index.name = 'ticker'
+
         # Columns of the CSV data files
         data_cols = ["ticker", "date", "open", "high", "low", "close", "volume"]
+
         # Read each record into the main DataFrame
         for file in os.listdir(dir_path):
+            # Read CSV
             df = pd.read_csv(dir_path + file, header=None, names=data_cols, index_col=0)
-            main_df.loc[:, df.date.iloc[0]] = df.close
+            tmp_df.loc[:, df.date.iloc[0]] = df.close
+
+        return tmp_df
 
 
 def get_relative_date(months: int) -> date:
