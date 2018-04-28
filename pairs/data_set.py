@@ -15,17 +15,30 @@ nasdaq_dir = os.path.join(dirname, '../data/nasdaq/')
 
 
 class DataSet:
+    """
+    # TODO
+    """
     # Create a calendar of US business days
     us_bd = CustomBusinessDay(calendar=USFederalHolidayCalendar())
 
     # Create list of NASDAQ and NYSE years in data set
     nasdaq_years = list(map(int, [j for i, j, y in os.walk(nasdaq_dir) if j][0]))
     nyse_years = list(map(int, [j for i, j, y in os.walk(nyse_dir) if j][0]))
+
     # Check if data set contains same year directories
     assert len(nasdaq_years) == len(nyse_years) and sorted(nasdaq_years) == sorted(
         nyse_years), 'Exchange year data directories do not match.'
 
-    def __init__(self, months: int = 12, year: int = 2017):
+    def __init__(self, nasdaq: bool = True, nyse: bool = True, months: int = 12, year: int = 2017):
+        """
+        # TODO
+        :param months:
+        :param year:
+        """
+        # Which exchanges should be included in the set
+        self.nasdaq = nasdaq
+        self.nyse = nyse
+
         # Set the year
         if year and year not in list(set(self.nasdaq_years + self.nyse_years)):
             raise ValueError("Year is not in data set.")
@@ -63,7 +76,7 @@ class DataSet:
         #     pass
 
         # Load data
-        self.data: pd.DataFrame = self.load_dataframe()
+        self.closing_price_data: pd.DataFrame = self.load_dataframe()
 
     def load_dataframe(self) -> pd.DataFrame:
         """
