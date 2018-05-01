@@ -29,11 +29,17 @@ class DataSet:
     assert len(nasdaq_years) == len(nyse_years) and sorted(nasdaq_years) == sorted(
         nyse_years), 'Exchange year data directories do not match.'
 
-    def __init__(self, nasdaq: bool = True, nyse: bool = True, months: int = 12, year: int = 2017):
+    def __init__(self, nasdaq: bool = True, nyse: bool = True, year: int = 2017,
+                 illiquid_months: int = 6, illiquid_value: int = 100):
         """
         # TODO
-        :param months:
-        :param year:
+
+        :param nasdaq: Whether nasdaq data should be read. TODO
+        :param nyse: Whether nyse data should be read. TODO
+        :param year: Year of exchange data to read.
+        :param illiquid_months: Number of months to check back for averages of trading volume. Used to remove stocks
+            who's average n month trading volume is < $100MM. Should use 6 or 12 months.
+        :param illiquid_value: Dollar amount (in millions of dollars) used to check illiquid stocks.
         """
         # Which exchanges should be included in the set
         self.nasdaq = nasdaq
@@ -75,7 +81,7 @@ class DataSet:
         # if not is_business_day(get_relative_date(months)):
         #     pass
 
-        # Load data
+        # Load uncleaned, closing price data set
         self.closing_price_data: pd.DataFrame = self.load_dataframe()
 
     def load_dataframe(self) -> pd.DataFrame:
@@ -91,8 +97,14 @@ class DataSet:
         # Concat DataFrames into main result DataFrames
         main_df = pd.concat([nasdaq_df, nyse_df], axis=0)
 
+        # Transpose DataFrame
+        main_df = main_df.T
+
+        # Change column name from ticker to date
+        main_df.columns.name = 'date'
+
         # Return transposed DataFrame with dates as index and ticker symbols as columns
-        return main_df.T
+        return main_df
 
     @staticmethod
     def df_read_data_sets(dir_path: str) -> pd.DataFrame:
