@@ -158,14 +158,14 @@ class DataSet:
         """
         Read a directory of CSV data files into a DataFrame.
 
+        :param data_type:
         :param dir_path: Full path of directory.
         :return: DataFrame of all CSV data files in directory.
         """
-        tmp_df = pd.DataFrame()
-        if data_type == ReadDataSetType.close:
-            tmp_df.index.name = 'ticker'
-        elif data_type == ReadDataSetType.volume:
-            tmp_df.index.name = 'volume'
+        closing_df = pd.DataFrame()
+        volume_df = pd.DataFrame()
+        closing_df.index.name = 'ticker'
+        volume_df.index.name = 'volume'
 
         # Columns of the CSV data files
         data_cols = ["ticker", "date", "open", "high", "low", "close", "volume"]
@@ -174,12 +174,13 @@ class DataSet:
         for file in os.listdir(dir_path):
             # Read CSV
             df = pd.read_csv(dir_path + file, header=None, names=data_cols, index_col=0)
-            if data_type == ReadDataSetType.close:
-                tmp_df.loc[:, df.date.iloc[0]] = df.close
-            elif data_type == ReadDataSetType.volume:
-                tmp_df.loc[:, df.date.iloc[0]] = df.volume
+            closing_df.loc[:, df.date.iloc[0]] = df.close
+            volume_df.loc[:, df.date.iloc[0]] = df.volume
 
-        return tmp_df
+        if data_type == ReadDataSetType.volume:
+            volume_df = volume_df * closing_df
+
+        return closing_df if data_type == ReadDataSetType.close else volume_df
 
 
 def get_relative_date(months: int) -> date:
@@ -191,4 +192,4 @@ def is_business_day(check_date: date) -> bool:
 
 
 if __name__ == '__main__':
-    x = DataSet()
+    x = DataSet(illiquid_value=100)
