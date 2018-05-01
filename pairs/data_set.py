@@ -40,14 +40,14 @@ class DataSet:
     assert len(nasdaq_years) == len(nyse_years) and sorted(nasdaq_years) == sorted(
         nyse_years), 'Exchange year data directories do not match.'
 
-    def __init__(self, read_nasdaq: bool = True, read_nyse: bool = True, year: int = 2017,
+    def __init__(self,  year: int = 2017, read_nasdaq: bool = True, read_nyse: bool = True,
                  illiquid_months: int = 6, illiquid_value: int = 1):
         """
         # TODO
 
+        :param year: Year of exchange data to read.
         :param read_nasdaq: Whether nasdaq data should be read. TODO
         :param read_nyse: Whether nyse data should be read. TODO
-        :param year: Year of exchange data to read.
         :param illiquid_months: Number of months to check back for averages of trading volume. Used to remove stocks
             who's average n month trading volume is < $100MM. Should use 6 or 12 months.
         :param illiquid_value: Dollar amount (in millions of dollars) used to check illiquid stocks.
@@ -67,7 +67,7 @@ class DataSet:
             raise ValueError("Year is not in data set.")
         else:
             self.year = year
-        print('Preparing data for Y{}'.format(self.year))
+        print('Preparing data for {}'.format(self.year))
 
         # Create lists of days for each exchange
         # TODO: There should be a DataFile class for these.
