@@ -13,6 +13,9 @@ dirname = os.path.dirname(__file__)
 nyse_dir = os.path.join(dirname, '../data/nyse/')
 nasdaq_dir = os.path.join(dirname, '../data/nasdaq/')
 
+# https://seekingalpha.com/article/4082438-dryships-rank-1-worst-stock-nasdaq
+known_fuck_ups = ['DRYS']
+
 
 class DataSet:
     """
