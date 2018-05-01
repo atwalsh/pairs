@@ -25,29 +25,6 @@ class ReadDataSetType(Enum):
     close = 'close'
 
 
-# class Exchange:
-#     dirname = os.path.dirname(__file__)
-#     dir_loc = None
-#
-#     def __init__(self, data_directory: str):
-#         self.year_list = list(map(int, [j for i, j, y in os.walk(os.path.join(dirname, data_directory)) if j][0]))
-#         self.data_files = self.nasdaq_day_files = [c for a, b, c in os.walk(nasdaq_dir + '/{}'.format(self.year))][0]
-#
-#
-# class NASDAQ(Exchange):
-#     dir_loc = '../data/nasdaq/'
-#
-#     def __init__(self):
-#         Exchange.__init__(self, data_directory=self.dir_loc)
-#
-#
-# class NYSE(Exchange):
-#     dir_loc = '../data/nyse/'
-#
-#     def __init__(self):
-#         Exchange.__init__(self, data_directory=self.dir_loc)
-
-
 class DataSet:
     """
     # TODO
