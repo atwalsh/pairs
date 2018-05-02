@@ -15,6 +15,8 @@ dirname = os.path.dirname(__file__)
 nasdaq_dir = os.path.join(dirname, '../data/nasdaq/')
 nyse_dir = os.path.join(dirname, '../data/nyse/')
 
+# .gitignore name
+gitignore = '.gitignore'
 # Should be ignored when reading data set
 # https://seekingalpha.com/article/4082438-dryships-rank-1-worst-stock-nasdaq
 known_fuck_ups = ['DRYS']
@@ -40,7 +42,7 @@ class DataSet:
     assert len(nasdaq_years) == len(nyse_years) and sorted(nasdaq_years) == sorted(
         nyse_years), 'Exchange year data directories do not match.'
 
-    def __init__(self,  year: int = 2017, read_nasdaq: bool = True, read_nyse: bool = True,
+    def __init__(self, year: int = 2017, read_nasdaq: bool = True, read_nyse: bool = True,
                  illiquid_months: int = 6, illiquid_value: int = 1):
         """
         # TODO
@@ -72,11 +74,11 @@ class DataSet:
         # Create lists of days for each exchange
         # TODO: There should be a DataFile class for these.
         self.nasdaq_day_files = [x for a, b, c in os.walk(nasdaq_dir + '/{}'.format(self.year)) for x in c if
-                                 x != '.gitignore']
+                                 x != gitignore]
         self.nasdaq_days = list(map(int, [re.split('_|\.', d)[1] for d in self.nasdaq_day_files]))
         self.nasdaq_dates = [datetime.strptime(str(d), '%Y%m%d') for d in self.nasdaq_days]
         self.nyse_day_files = [x for a, b, c in os.walk(nyse_dir + '/{}'.format(self.year)) for x in c if
-                               x != '.gitignore']
+                               x != gitignore]
         self.nyse_days = list(map(int, [re.split('_|\.', d)[1] for d in self.nyse_day_files]))
         self.nyse_dates = [datetime.strptime(str(d), '%Y%m%d') for d in self.nyse_days]
 
@@ -153,8 +155,7 @@ class DataSet:
 
         return scaled_companies
 
-    @staticmethod
-    def df_read_data_sets(dir_path: str, data_type: ReadDataSetType) -> pd.DataFrame:
+    def df_read_data_sets(self, dir_path: str, data_type: ReadDataSetType) -> pd.DataFrame:
         """
         Read a directory of CSV data files into a DataFrame.
 
@@ -172,13 +173,19 @@ class DataSet:
 
         # Read each record into the main DataFrame
         for file in os.listdir(dir_path):
-            # Read CSV
-            df = pd.read_csv(dir_path + file, header=None, names=data_cols, index_col=0)
-            closing_df.loc[:, df.date.iloc[0]] = df.close
-            volume_df.loc[:, df.date.iloc[0]] = df.volume
+            if file != gitignore:
+                # Read CSV
+                df = pd.read_csv(dir_path + file, header=None, names=data_cols, index_col=0)
+                closing_df.loc[:, df.date.iloc[0]] = df.close
+                volume_df.loc[:, df.date.iloc[0]] = df.volume
 
         if data_type == ReadDataSetType.volume:
             volume_df = volume_df * closing_df
+
+        open_days = volume_df.columns[volume_df.max(axis=0) != 0]
+
+        volume_df = volume_df.loc[:, open_days]
+        closing_df = closing_df.loc[:, open_days]
 
         return closing_df if data_type == ReadDataSetType.close else volume_df
 
@@ -192,4 +199,4 @@ def is_business_day(check_date: date) -> bool:
 
 
 if __name__ == '__main__':
-    x = DataSet(illiquid_value=100)
+    x = DataSet()
