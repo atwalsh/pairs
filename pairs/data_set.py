@@ -16,7 +16,7 @@ nyse_dir = os.path.join(dirname, '../data/nyse/')
 gitignore = '.gitignore'
 # Should be ignored when reading data set
 # https://seekingalpha.com/article/4082438-dryships-rank-1-worst-stock-nasdaq
-known_fuck_ups = ['DRYS']
+bad_stocks = ['DRYS']
 
 
 class ReadDataSetType(Enum):
@@ -79,6 +79,9 @@ class DataSet:
         else:
             self.data = pd.concat([self.nasdaq, self.nyse], axis=0)
 
+        for s in bad_stocks:
+            self.data = self.data[self.data.ticker != s]
+        
         # Get closing data
         _closing_data: pd.DataFrame = self.data.pivot(index='date', columns='ticker', values='close').dropna(axis=1)
 
