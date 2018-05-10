@@ -84,7 +84,7 @@ class DataSet:
 
         # Set volume data. Trading volume * closing price
         _volume_data = self.data.pivot(index='date', columns='ticker', values='volume')
-        _volume_data = _closing_data * _volume_data.loc[:, self.closing_data.columns]
+        _volume_data = _closing_data * _volume_data.loc[:, _closing_data.columns]
         self.volume_data: pd.DataFrame = _volume_data[_volume_data.max(axis=1) != 0]
 
         # Set closing data
