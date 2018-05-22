@@ -40,7 +40,7 @@ class DataSet:
         nyse_years), 'Exchange year data directories do not match.'
 
     def __init__(self, year: int = 2017, read_nasdaq: bool = True, read_nyse: bool = True,
-                 illiquid_months: int = 6, illiquid_value: int = 1):
+                 illiquid_months: int = 6, illiquid_value: int = 10):
         """
         # TODO
 
@@ -130,4 +130,5 @@ def is_business_day(check_date: date) -> bool:
 
 
 if __name__ == '__main__':
-    x = DataSet()
+    x = DataSet(illiquid_value=10)
+    print('test')
